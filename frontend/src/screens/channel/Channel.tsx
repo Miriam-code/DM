@@ -6,18 +6,17 @@ import styles from "./Channel.styles";
 const fleche = require('../../assets/images/fleche.png');
 const camera = require('../../assets/images/camera.png');
 import ImagePicker, { MediaType , CameraOptions, launchCamera} from 'react-native-image-picker';
-
-//import { UserContext } from '../AuthContext/Usercontext';
+import { AuthContext } from "../../context/AuthContext";
 
 function Channel () { 
 
   const [messages, setMessages] = useState([]);
-  const [user, setUser] = useState([]);
+  const user = useContext(AuthContext);
 
   const [cameraPhoto, setCameraPhoto] = useState();
 
 
-  const openCamera = async () => {
+  /*const openCamera = async () => {
 
     let options:CameraOptions = {
       saveToPhotos:true,

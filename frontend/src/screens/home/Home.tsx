@@ -10,7 +10,7 @@ import { createChannelAPI } from '../../api/channel.ts'
 const Home: React.FC = () => {
 
   const [channelsList, setChannelsList] = useState(null);
-  //const [name, setName] = useState("");
+  const [name, setName] = useState("");
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
  

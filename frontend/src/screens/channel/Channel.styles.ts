@@ -43,7 +43,7 @@ const styles: Styles = StyleSheet.create<Styles>({
     marginBottom: 10,
   },
   messageUserName: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: 'bold',
     marginRight: 10,
     color: '#007bff', // Couleur du nom d'utilisateur du message

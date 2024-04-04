@@ -56,7 +56,7 @@ const styles: Styles = StyleSheet.create<Styles>({
     justifyContent: 'center',
   },
   titleTextStyle: {
-    fontSize: 24,
+    fontSize: 23,
     color: '#fff',
     fontWeight: '600',
     fontFamily: 'Noto Sans',
