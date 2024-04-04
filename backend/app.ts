@@ -22,7 +22,7 @@ const corsConfig = {
   origin: allowedOrigins,
   credentials: true,
 };
-app.use("/upload", express.static(path.join(__dirname, "../assets/upload")));
+app.use("/upload", express.static(path.join(__dirname, "assets/upload")));
 app.use(cors(corsConfig));
 
 
@@ -52,8 +52,6 @@ connectToDatabase();
 
 app.use(userRoutes);
 app.use(emailVerificationRoutes)
-
-
 app.use(channelRoutes);
 app.use(messageRoutes);
 

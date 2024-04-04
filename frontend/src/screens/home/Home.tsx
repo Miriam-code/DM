@@ -1,10 +1,14 @@
-import React from 'react';
-import {View, Text} from 'react-native';
+import React, { useContext } from 'react';
+import {View,  Text} from 'react-native';
+
 
 const Home: React.FC = () => {
+
+  
   return (
     <View>
-      <Text>home</Text>
+     
+      <Text>Home</Text>
     </View>
   );
 };
