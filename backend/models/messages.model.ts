@@ -6,6 +6,8 @@ interface Message extends Document {
   userName: string;
   content: string;
   createdAt: Date;
+  user: Schema.Types.ObjectId; 
+  //channel: Schema.Types.ObjectId;
 }
 
 const messageSchema = new Schema<Message>({

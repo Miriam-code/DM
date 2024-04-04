@@ -1,5 +1,3 @@
-// App.tsx
-
 import React, { useEffect, useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
@@ -12,6 +10,7 @@ import leftArrow from './src/assets/icons/leftArrow.png';
 import { AuthProvider,AuthContext} from './src/context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Home from './src/screens/home/Home';
+import Channel from './src/screens/channel/Channel';
 import DrawerNavigator from './src/components/DrawerNavigator';
 
 const Stack = createNativeStackNavigator();
@@ -68,6 +67,8 @@ const AppContent: React.FC = () => {
         {isLoggedIn ? (
           <Stack.Group screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Drawer" component={DrawerNavigator} />
+            <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+            <Stack.Screen name="Channel" component={Channel} options={{ headerShown: false }} />
           </Stack.Group>
         ) : (
           <Stack.Group>
