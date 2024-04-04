@@ -1,32 +1,41 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem, DrawerContent } from '@react-navigation/drawer';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import Home from '../screens/home/Home';
 import MyProfile from '../screens/myProfile/MyProfile';
 import LogoutButton from './LogoutButton/LogoutButton';
 import { hostname } from '../hostname/hostname';
 import { AuthContext } from '../context/AuthContext';
+import Messages from '../screens/messages/Messages';
+
 
 
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigator: React.FC = () => {
   const {user} = useContext(AuthContext);
-  console.log(user);
-  const imageUrl = `http://localhost:3001/upload/${user.profileImage}`;
-  console.log(imageUrl);
+ 
   
   
 
   return (
     <Drawer.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: { backgroundColor: '#262A34' },
+        headerTintColor: 'white',
+        headerTitleStyle: { fontWeight: 'bold', fontSize: 18 },
+      }}
+
+  
+
       drawerContent={props => {
         return (
           <DrawerContentScrollView {...props}>
             <View style={styles.drawerHeader}>
-              {user && (
+              {user  && (
                 <>
-                  <Image source={{ uri:imageUrl}} style={styles.profileImage} />
+                  <Image source={{ uri:`${hostname}/upload/${user.profileImage}`}} style={{width: 100, height: 100, borderRadius: 50, backgroundColor: '#eee'}} />
                   <Text>{user.pseudo}</Text>
                 </>
               )}
@@ -39,6 +48,7 @@ const DrawerNavigator: React.FC = () => {
       }}>
       <Drawer.Screen name="Accueil" component={Home} />
       <Drawer.Screen name="Mon profil" component={MyProfile} />
+      <Drawer.Screen name="Messages" component={Messages} />
     </Drawer.Navigator>
   );
 };
