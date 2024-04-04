@@ -1,24 +1,16 @@
 import axios from 'axios';
-import env from 'react-dotenv'
 import { hostname } from '../hostname/hostname';
 
-export const createChannelAPI = async (data:string) => {
-
-   return await axios({
-      method: 'post',
-      url: `${hostname}/channel`,
-      data: { name: data }
-   })
-   .then((res) => {
-      if (res.status === 200) {
-        return res.data
-      }
-   })
-   .catch((error) => {
-      console.log(error);
-      throw error;
-   })
-}
+export const createChannelAPI = async (name:string) => {
+   try {
+     const response = await axios.post(`${hostname}/channel`, { name });
+     return response.data
+   } catch (error) {
+     console.error('Error creating channel:', error);
+     console.info(error)
+     throw error;
+   }
+ };
 
 export const getAll = async () => {
 
@@ -35,7 +27,7 @@ export const getAll = async () => {
     })
 }
 
-export const getOneChannel = async (id:number) => {
+export const getOneChannel = async (id:any) => {
 
     return await axios({
        method: 'get',
@@ -50,7 +42,7 @@ export const getOneChannel = async (id:number) => {
     })
 }
 
-export const deleteChannel = async (id) => {
+export const deleteChannel = async (id:any) => {
 
     return await axios({
        method: 'delete',
@@ -65,7 +57,7 @@ export const deleteChannel = async (id) => {
     })
 }
 
-export const updateChannel = async (id:number , data:string) => {
+export const updateChannel = async (id:any , data:string) => {
 
     return await axios({
        method: 'put',

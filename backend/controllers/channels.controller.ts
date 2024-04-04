@@ -1,17 +1,16 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
+import { Types } from 'mongoose';
 import Channel from "../models/channels.model";
 
 const SERVER_ERROR = "SERVER_ERROR";
 const CHATROOM_ALREADY_EXISTS = "CHANNEL_ALREADY_EXISTS";
-
-
 class ChannelController {
 
-    // créer une channel
+    // créer une channel PUBLIC 
   
-    static async create(req: Request, res: Response): Promise<void> {
+    static async createPublic(req: Request, res: Response): Promise<void> {
       try {
-          const { name } = req.body;
+          const { name} = req.body;
           const chatroomExists = await Channel.findOne({ name });
   
           if (chatroomExists) {
@@ -33,25 +32,56 @@ class ChannelController {
       }
   }
 
-  //récupérer toutes les channels et messages
+  // créer une channel Privée
 
-  static async getAll(req: Request, res: Response): Promise<void> {
+  static async createPrivateChannel( req: Request, res: Response ): Promise<void> {
     try {
-      const channels = await Channel.find().populate('messages');
+
+      const UsersID =  [req.params.user1Id , req.params.user2Id ]
+      const channelName = `private`;
+  
+      // Vérifiez d'abord si le canal privé existe déjà entre ces deux utilisateurs
+      const existingChannel = await Channel.findOne({ channelName });
+  
+      if (existingChannel) {
+        console.log('Private channel already exists between these users');
+        return;
+      }
+  
+      // Créez le canal privé s'il n'existe pas déjà
+      const channel = new Channel({
+        channelName,
+        type: 'private',
+        participants: UsersID,
+      });
+  
+      await channel.save();
+      console.log('Private channel created successfully');
+    } catch (error) {
+      console.error('Error creating private channel:', error);
+      throw error;
+    }
+  }
+
+  //récupérer toutes les channels  PUBLIC  et messages
+
+  static async getAllPublic(req: Request, res: Response): Promise<void> {
+
+    try {
+
+      const channels = await Channel.find({ status: 'public' }).populate('messages');
 
       res.status(200).json(channels);
     } catch (error) {
-      console.error(
-        "Erreur lors de la récupération de tous les channels :",
-        error
-      );
+
+      console.error("Erreur lors de la récupération de tous les channels :", error);
       res.status(500).json({
         message: "Erreur lors de la récupération de tous les channels",
       });
     }
   }
 
-  // récupérer une channel avec ses messages
+  // récupérer avec l'id une channel public avec ses messages
 
   static async getOne(req: Request, res: Response): Promise<void> {
     try {
@@ -71,7 +101,27 @@ class ChannelController {
       });
     }
   }
+  // récupérer toute les chatroom privée d'un IDUSER
 
+  static  async  getPrivateChannels(req: Request, res: Response): Promise<void>  {
+
+    const participantId = req.params.id;
+  
+    try {
+      const channels = await Channel.find({ type: 'private', participants: participantId }).exec();
+
+      res.status(200).json(channels);
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération de la channel et de ses messages :",
+        error
+      );
+      res.status(500).json({
+        message: "Erreur lors de la récupération de la channel et de ses messages ",
+      });
+    }
+  }
+  
   // update le name d'une channel
 
   static async updateName(req: Request, res: Response): Promise<void> {

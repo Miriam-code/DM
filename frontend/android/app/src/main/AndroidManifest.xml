@@ -19,7 +19,9 @@
       android:icon="@mipmap/ic_launcher"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
-      android:theme="@style/AppTheme">
+      android:theme="@style/AppTheme"
+      android:usesCleartextTraffic="true">
+
 
       <!-- Ajoutez votre clÃ© API Google Maps ici -->
       <meta-data

@@ -55,6 +55,7 @@ const Register: React.FC = () => {
         return response.data;
       }
     } catch (error) {
+      console.log(error);
       console.error("Erreur lors de la vérification de l'e-mail :", error);
       throw error;
     }
