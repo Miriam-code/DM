@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState , useContext} from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styles from './Login.styles';
 import logo from '../../assets/images/logo_DMCHAT.png';
-import { saveUser } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import * as yup from 'yup';
 import {login} from '../../api/auth'
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { hostname } from '../../hostname/hostname';
 
 const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Login: React.FC = () => {
-
+  const {saveUser} = useContext(AuthContext);
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,20 +26,31 @@ const Login: React.FC = () => {
   });
 
   const handleLogin = async () => {
-
-
     try {
       // Validation des champs de formulaire
       await handleValidationSchema.validate({ email, password });
-      const token = await login({ email, password });
-  
-      if (token) {
-        await saveUser();
-        navigation.navigate('Home');
-      }else{
+
+      // Effectuer la requête POST pour la connexion
+      const response = await  axios.post(`${hostname}/login`, {
+        email,
+        password,
+      });
+
+      // Vérifier la réponse de l'API
+      if (response.status === 200) {
+        // Récupérer le token d'authentification depuis la réponse de l'API
+        const { authToken } = response.data;
+
+        // Stocker le token d'authentification dans AsyncStorage et se connecter
+        await AsyncStorage.setItem('userToken', authToken);
+        await saveUser(authToken)
+
+        // Connexion réussie, rediriger l'utilisateur vers la page de profil ou toute autre action nécessaire
+        console.log('Connexion réussie !');
+      } else {
+        // Afficher un message d'erreur en cas de problème avec la connexion
         Alert.alert('Erreur de connexion', 'Veuillez vérifier vos identifiants et réessayer.');
       }
-
     } catch (error: any) {
       // Gérer les erreurs de validation des champs de formulaire
       if (error.name === 'ValidationError') {

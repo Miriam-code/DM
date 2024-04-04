@@ -4,20 +4,20 @@ import { View, StyleSheet, Text, Image } from 'react-native';
 import Home from '../screens/home/Home';
 import MyProfile from '../screens/myProfile/MyProfile';
 import LogoutButton from './LogoutButton/LogoutButton';
-import { useAuth , AuthProvider } from '../context/AuthContext';
 import { hostname } from '../hostname/hostname';
+import { AuthContext } from '../context/AuthContext';
 
 
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigator: React.FC = () => {
-  const imgprofile = user.profileImage 
+  const {user} = useContext(AuthContext);
+  console.log(user);
+  const imageUrl = `http://localhost:3001/upload/${user.profileImage}`;
+  console.log(imageUrl);
+  
   
 
-  useEffect(() => {
-    
-    
-  })
   return (
     <Drawer.Navigator
       drawerContent={props => {
@@ -26,7 +26,7 @@ const DrawerNavigator: React.FC = () => {
             <View style={styles.drawerHeader}>
               {user && (
                 <>
-                  <Image source={{ uri:`${hostname}/upload/${imgprofile}`}} style={styles.profileImage} />
+                  <Image source={{ uri:imageUrl}} style={styles.profileImage} />
                   <Text>{user.pseudo}</Text>
                 </>
               )}

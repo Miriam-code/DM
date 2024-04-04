@@ -1,15 +1,15 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {View, Text, TouchableOpacity, Modal, Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
-import {useAuth} from '../../context/AuthContext';
+import {AuthContext} from '../../context/AuthContext';
 import {hostname} from '../../hostname/hostname';
 import styles from './LogoutButton.styles';
 
 const LogoutButton: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const navigation = useNavigation();
-  const {logout} = useAuth();
+  const {logout} = useContext(AuthContext);
 
   const handleLogout = async () => {
     try {

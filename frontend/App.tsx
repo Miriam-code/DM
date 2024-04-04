@@ -1,13 +1,15 @@
-import React, {useEffect , useContext} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator, NativeStackNavigationOptions} from '@react-navigation/native-stack';
+// App.tsx
+
+import React, { useEffect, useContext } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import Login from './src/screens/login/Login';
 import Register from './src/screens/register/Register';
 import VerifyEmailCode from './src/screens/verifyEmailCode/verifyEmailCode';
 import CreateProfile from './src/screens/CreateProfile/CreateProfile';
-import {TouchableOpacity, Image} from 'react-native';
+import { TouchableOpacity, Image } from 'react-native';
 import leftArrow from './src/assets/icons/leftArrow.png';
-import {UserProvider, UserContext} from './src/context/AuthContext';
+import { AuthProvider,AuthContext} from './src/context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Home from './src/screens/home/Home';
 import DrawerNavigator from './src/components/DrawerNavigator';
@@ -16,14 +18,14 @@ const Stack = createNativeStackNavigator();
 
 const defaultScreenOptions: NativeStackNavigationOptions = {
   headerShown: true,
-  headerStyle: {backgroundColor: '#262A34'},
+  headerStyle: { backgroundColor: '#262A34' },
   headerTintColor: 'white',
-  headerTitleStyle: {fontWeight: 'bold', fontSize: 18},
+  headerTitleStyle: { fontWeight: 'bold', fontSize: 18 },
 };
 
 const AppContent: React.FC = () => {
 
-  const {saveUser, isLoggedIn,logout } = useContext(UserContext);
+  const { saveUser, isLoggedIn, logout } = useContext(AuthContext);
   useEffect(() => {
 
     const checkTokenExpiration = async () => {
@@ -35,7 +37,7 @@ const AppContent: React.FC = () => {
           if (currentTime > expiryTime) {
             console.log('Token expiré. Déconnexion automatique...');
             logout();
-          }else{
+          } else {
             saveUser();
           }
 
@@ -55,7 +57,7 @@ const AppContent: React.FC = () => {
         onPress={() => {
           navigation.navigate(Home);
         }}>
-        <Image source={leftArrow} style={{height: 25, width: 25, marginRight: 5}} />
+        <Image source={leftArrow} style={{ height: 25, width: 25, marginRight: 5 }} />
       </TouchableOpacity>
     );
   };
@@ -64,18 +66,18 @@ const AppContent: React.FC = () => {
     <NavigationContainer>
       <Stack.Navigator>
         {isLoggedIn ? (
-          <Stack.Group screenOptions={{headerShown: false}}>
+          <Stack.Group screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Drawer" component={DrawerNavigator} />
           </Stack.Group>
         ) : (
           <Stack.Group>
-            <Stack.Screen name="Login" component={Login} options={{headerShown: false}} />
-            <Stack.Screen name="Register" component={Register} options={{headerShown: false}} />
-            <Stack.Screen name="VerifyEmailCode" component={VerifyEmailCode} options={{headerShown: false}} />
+            <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+            <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+            <Stack.Screen name="VerifyEmailCode" component={VerifyEmailCode} options={{ headerShown: false }} />
             <Stack.Screen
               name="CreateProfile"
               component={CreateProfile}
-              options={({navigation}) => ({
+              options={({ navigation }) => ({
                 ...defaultScreenOptions,
                 headerLeft: () => headerLeft(navigation),
               })}
@@ -89,11 +91,9 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <UserProvider>
-
-        <AppContent />
-
-    </UserProvider>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 

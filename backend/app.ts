@@ -20,24 +20,30 @@ let allowedOrigins = [/localhost:\d{4,5}$/];
 
 const corsConfig = {
   origin: allowedOrigins,
-  maxAge: 86400, // NOTICE: 1 day
   credentials: true,
 };
-
-app.use(cors(corsConfig));
 app.use("/upload", express.static(path.join(__dirname, "../assets/upload")));
+app.use(cors(corsConfig));
+
 
 const reactIndexFile = path.join(
   __dirname,
   "..",
   "..",
-  "frontend"
+  "frontend",
+  "dist",
+  "index.html"
 );
 
-if (fs.existsSync(reactIndexFile)) {
-  //app.use(express.static(path.join(__dirname, "..", "..", "frontend")));
 
-  app.get("*", (req: Request, res: Response) => {
+if (fs.existsSync(reactIndexFile)) {
+  // serve REACT resources
+
+  app.use(express.static(path.join(__dirname, "..", "..", "frontend", "dist")));
+
+  // redirect all requests to the REACT index file
+
+  app.get("*", (req, res) => {
     res.sendFile(reactIndexFile);
   });
 }
@@ -46,7 +52,7 @@ connectToDatabase();
 
 app.use(userRoutes);
 app.use(emailVerificationRoutes)
-app.use("/upload", express.static(path.join(__dirname, "../assets/upload")));
+
 
 app.use(channelRoutes);
 app.use(messageRoutes);

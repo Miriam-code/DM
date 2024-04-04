@@ -19,12 +19,14 @@ export const getUserInfo = async (token:any) => {
 
 export const login = async (email: string, password: string): Promise<string | undefined> => {
   try {
-    const response = await axios.post(`${hostname}/user/auth`, {
+    const response = await axios.post(`${hostname}/login`, {
       email,
       password,
     });
 
     const authtoken = response.data.authtoken;
+    console.log(authtoken);
+    
     if (authtoken) {
       await AsyncStorage.setItem('token', authtoken);
       return authtoken;

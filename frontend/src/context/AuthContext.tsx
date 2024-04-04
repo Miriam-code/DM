@@ -1,61 +1,64 @@
-import React, { useState, createContext, useMemo } from 'react';
+import React, { useState, createContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserInfo } from '../api/auth';
 
-interface User {
-  pseudo: string;
-  email: string;
-  profileImage?: string;
-  firstName: string;
-  lastName: string;
-  sexe: string;
-  role: 'user' | 'admin';
-  createdAt: Date;
-  updatedAt: Date;
-}
+const AuthContext = createContext();
 
-interface UserContextValue {
-  isLoggedIn: boolean;
-  user: User | null;
-  logout: () => Promise<void>;
-  saveUser: () => Promise<void>;
-}
+const AuthProvider = ({ children }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
-const UserContext = createContext<UserContextValue | null>(null);
+  useEffect(() => {
+    const checkUserLogin = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (token) {
+          const data = await getUserInfo(token);
+          setUser(data);
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la vérification de la connexion de l\'utilisateur :', error);
+      }
+    };
 
-const UserProvider: React.FC<{}> = ({ children }) => {
+    checkUserLogin();
+  }, []);
 
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
-
-  const saveUser = async (): Promise<void> => {
+  const saveUser = async (authToken) => {
     try {
-      const token = await AsyncStorage.getItem('token');
-      const data = await getUserInfo(token);
+      await AsyncStorage.setItem('userToken', authToken);
+      const data = await getUserInfo(authToken);
       setUser(data);
       setIsLoggedIn(true);
-      console.log('Connexion réussie !');
-    } catch (e) {
-      console.log('Erreur lors de la récupération des infos utilisateur :', e);
+      
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde de l\'utilisateur :', error);
     }
   };
 
-  const logout = async (): Promise<void> => {
+  const logout = async () => {
     try {
-      await AsyncStorage.clear();
+      await AsyncStorage.removeItem('userToken');
       setUser(null);
-      localStorage.removeItem('token');
       setIsLoggedIn(false);
     } catch (error) {
-      console.error("Erreur lors de la déconnexion de l'utilisateur :", error);
-      throw error;
+      console.error('Erreur lors de la déconnexion de l\'utilisateur :', error);
     }
   };
 
-  // Mémorisez la valeur du contexte pour éviter les rendus inutiles
-  const value: UserContextValue = useMemo(() => ({ isLoggedIn, user, logout, saveUser }), [isLoggedIn, user]);
+  const authContextValue = {
+    isLoggedIn,
+    user,
+    saveUser,
+    logout,
+  };
 
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+  return (
+    <AuthContext.Provider value={authContextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-export { UserContext, UserProvider };
+export { AuthContext, AuthProvider };
