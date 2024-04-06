@@ -77,6 +77,7 @@ function Channel() {
       fetchMessages()
     }
     setMessageInput("");
+    fetchMessages()
   };
 
   useEffect(() => {
@@ -90,25 +91,43 @@ function Channel() {
         ToastAndroid.show("Error fetching messages db ", ToastAndroid.SHORT)
       }
     };
+    
+  })
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const { msg } = await getAllMessages(id);
+        setMessages(msg);
+
+      } catch (error) {
+        console.error(error);
+        ToastAndroid.show("Error fetching messages db ", ToastAndroid.SHORT)
+      }
+    };
+    
+    fetchMessages();
+    
+  }, [messages])
+
+  useEffect(() => {
+
     const fectChannel = async () => {
       try {
         const { data } = await getOneChannel(id);
         setChatroom(data);
-        setChatroomName(data.channelName)
-        if (chatroomName.startsWith("Private")) {
+       
+        if (data.channelName.startsWith("Channel ")) {
           setChatroomName("Private Channel");
+        }else {
+          setChatroomName(data.channelName)
         }
       } catch (error) {
         console.error(error);
         ToastAndroid.show("Error fetching channel info", ToastAndroid.SHORT);
       }
     };
-
-    fetchMessages();
-    fectChannel();
-
-    console.log('msg api', messages)
-
+    fectChannel()
   }, []);
 
   useEffect(() => {
@@ -163,7 +182,7 @@ function Channel() {
       };
     }
 
-  }, [socket, id, messages]);
+  }, [socket, id]);
 
   return (
     <View style={styles.mainContainer}>

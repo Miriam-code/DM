@@ -72,8 +72,6 @@ const CreateProfileSetp2: React.FC = () => {
       await validationSchema.validate({pseudo}, {abortEarly: false});
 
       const profileData = new FormData();
-
-      // Ajoutez les autres champs du formulaire
       profileData.append('sexe', sexe);
       profileData.append('firstName', firstName);
       profileData.append('lastName', lastName);
@@ -81,7 +79,6 @@ const CreateProfileSetp2: React.FC = () => {
       profileData.append('password', password);
       profileData.append('pseudo', pseudo);
 
-      // Vérifiez si une image a été sélectionnée
       if (selectedImage) {
         // Ajoutez l'image sélectionnée à l'objet FormData
         const imageUriParts = selectedImage.split('.');
@@ -102,7 +99,6 @@ const CreateProfileSetp2: React.FC = () => {
       });
 
       if (response.ok) {
-        // Effacez les données AsyncStorage avant de naviguer vers l'écran de connexion
         await AsyncStorage.removeItem('sexe');
         await AsyncStorage.removeItem('firstname');
         await AsyncStorage.removeItem('lastname');

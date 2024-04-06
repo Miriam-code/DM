@@ -29,10 +29,7 @@ export const createPrivate = async (user1Id, user2Id) => {
        data: { user1Id, user2Id },
      });
  
-     console.log("res", res.data);
- 
      if (res.status === 200) {
-       console.log("message", res.data.message);
        return res.data; 
      } else {
        console.error(res.data.error);
@@ -78,7 +75,6 @@ export const getPrivateChannels = async (id) => {
     url: `${hostname}/channel/private/${id}`,
   })
     .then(res => {
-      console.log('api res private ', res.data);
     
       return res;
     })
@@ -93,7 +89,6 @@ export const deleteChannel = async id => {
     url: `${hostname}/channel/${id}`,
   })
     .then(res => {
-      console.log(res.data);
       return res.data;
     })
     .catch(e => {
@@ -108,7 +103,6 @@ export const updateChannel = async (id: number, data: string) => {
     data: data,
   })
     .then(res => {
-      console.log(res.data);
       return res.data;
     })
     .catch(e => {

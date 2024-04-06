@@ -56,18 +56,16 @@ export default function initializeSocket(server: any) {
               userName: user.pseudo,
               content: message,
             });
-    
-            // Vérifier si l'utilisateur n'est pas déjà dans la liste des participants
+  
             const channel = await ChannelModel.findOne({ _id: channelId });
             if (channel && !channel.participants.includes((socket as any).userId)) {
-              // Mettre à jour la liste des participants du canal avec l'ID de l'utilisateur
+
               await ChannelModel.findByIdAndUpdate(channelId, { $push: { participants: (socket as any).userId } });
             }
     
-            // Mettre à jour la liste des messages du canal avec l'ID du nouveau message
             await ChannelModel.findByIdAndUpdate(channelId, { $push: { messages: newMessage._id } });
             
-            // Mettre à jour la liste des messages de l'utilisateur avec l'ID du nouveau message
+      
             await UserModel.findByIdAndUpdate((socket as any).userId, { $push: { messages: newMessage._id } });
     
             io.to(channelId).emit("newMessage", {
