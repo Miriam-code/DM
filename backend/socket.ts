@@ -1,6 +1,8 @@
 import { Server, Socket } from "socket.io";
 import User from "./models/users.model";
 import Message from "./models/messages.model";
+import ChannelModel from "./models/channels.model";
+import UserModel from "./models/users.model";
 
 export default function initializeSocket(server: any) {
     
@@ -42,31 +44,50 @@ export default function initializeSocket(server: any) {
 
     socket.on("chatroomMessage", async ({ channelId, message }: { channelId: string, message: string }) => {
       console.log("msg en cours...")
-      if (message.trim().length > 0) {
+      console.log(message)
+      if (message && message.trim().length > 0) {
         try {
           const user = await User.findOne({ _id: (socket as any).userId });
+    
           if (user) {
-            const newMessage = new Message({
-              channel: channelId,
-              user: (socket as any).userId,
-              name: user.pseudo,
-              message: message,
+            const newMessage = await Message.create({
+              channelId: channelId,
+              userId: (socket as any).userId,
+              userName: user.pseudo,
+              content: message,
             });
-
+    
+            // Vérifier si l'utilisateur n'est pas déjà dans la liste des participants
+            const channel = await ChannelModel.findOne({ _id: channelId });
+            if (channel && !channel.participants.includes((socket as any).userId)) {
+              // Mettre à jour la liste des participants du canal avec l'ID de l'utilisateur
+              await ChannelModel.findByIdAndUpdate(channelId, { $push: { participants: (socket as any).userId } });
+            }
+    
+            // Mettre à jour la liste des messages du canal avec l'ID du nouveau message
+            await ChannelModel.findByIdAndUpdate(channelId, { $push: { messages: newMessage._id } });
+            
+            // Mettre à jour la liste des messages de l'utilisateur avec l'ID du nouveau message
+            await UserModel.findByIdAndUpdate((socket as any).userId, { $push: { messages: newMessage._id } });
+    
             io.to(channelId).emit("newMessage", {
               message,
-              name: user.pseudo,
+              Username: user.pseudo,
               userId: (socket as any).userId,
             });
-
-            await newMessage.save();
+            console.log("Message saved:", newMessage);
           } else {
             console.log("User not found.");
           }
         } catch (error) {
           console.error("Error:", error);
         }
+      } else {
+        console.log('Message is undefined or empty!');
       }
     });
+    
+    
+
   });
 }

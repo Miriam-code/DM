@@ -9,8 +9,12 @@ class MessageController {
 
   static async getAllMessagesOneChannel(req: Request, res: Response): Promise<void> {
     try {
+
+      console.log('ici id controlleur', req.params.id)
         
-      const msg = await Message.find({ channelId: req.params.id }).populate('user');
+      const msg = await Message.find({ channelId: req.params.id })
+
+      console.log('msg recuperer de la Base de données', msg)
       
       res.status(200).send({ ok: true, msg});
 

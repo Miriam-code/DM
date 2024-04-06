@@ -12,7 +12,7 @@ router.post("/channel/private",ChannelController.createPrivateChannel);
 
 // GET ALL channels PUBLIC
 
-router.get("/channel/", ChannelController.getAllPublic);
+router.get("/channel", ChannelController.getAllPublic);
 
 // GET ONE une channel avec ses messages
 

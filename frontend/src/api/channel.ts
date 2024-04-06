@@ -1,5 +1,4 @@
 import axios from 'axios';
-import env from 'react-dotenv';
 import {hostname} from '../hostname/hostname';
 
 export const createChannelAPI = async (data: string) => {
@@ -22,28 +21,51 @@ export const createChannelAPI = async (data: string) => {
   }
 };
 
+export const createPrivate = async (user1Id, user2Id) => {
+   try {
+     const res = await axios({
+       method: 'post',
+       url: `${hostname}/channel/private`,
+       data: { user1Id, user2Id },
+     });
+ 
+     console.log("res", res.data);
+ 
+     if (res.status === 200) {
+       console.log("message", res.data.message);
+       return res.data; 
+     } else {
+       console.error(res.data.error);
+       throw new Error('Erreur lors de la création du canal');
+     }
+   } catch (error) {
+     console.error(error);
+     throw error;
+   }
+ };
+ 
+
 export const getAll = async () => {
+
   return await axios({
     method: 'get',
     url: `${hostname}/channel`,
   })
     .then(res => {
-      console.log(res.data);
-      return res.data.channels;
+      return res;
     })
     .catch(e => {
       console.log(e);
     });
 };
 
-export const getOneChannel = async (id: number) => {
+export const getOneChannel = async (id) => {
   return await axios({
     method: 'get',
     url: `${hostname}/channel/${id}`,
   })
     .then(res => {
-      console.log(res.data);
-      return res.data.channel;
+      return res;
     })
     .catch(e => {
       console.log(e);

@@ -11,8 +11,8 @@ interface User extends Document {
   role: 'user' | 'admin';
   createdAt: Date;
   updatedAt: Date;
- // messages: Schema.Types.ObjectId[];
-  //channels: Schema.Types.ObjectId[];
+ messages: Schema.Types.ObjectId[];
+channels: Schema.Types.ObjectId[];
 }
 
 
@@ -28,8 +28,8 @@ const UserSchema = new Schema<User>({
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  //messages: [{ type: Schema.Types.ObjectId, ref: 'Message' }],
-  //channels: [{ type: Schema.Types.ObjectId, ref: 'Channel' }] 
+  messages: [{ type: Schema.Types.ObjectId, ref: 'Message' }],
+  channels: [{ type: Schema.Types.ObjectId, ref: 'Channel' }] 
 });
 
 const UserModel: Model<User> = model<User>('User', UserSchema);
