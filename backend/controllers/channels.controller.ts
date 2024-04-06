@@ -42,7 +42,7 @@ class ChannelController {
       }
 
       const channel = new Channel({
-        channelName: `Canal privé ${user1Id} - ${user2Id}`,
+        channelName: `Channel Private ${user1Id} - ${user2Id}`,
         type: "private",
         participants: [user1Id, user2Id],
       });
@@ -84,6 +84,7 @@ class ChannelController {
   }
 
   static async getPrivateChannels(req: Request, res: Response): Promise<void> {
+    
     const participantId = req.params.id;
     try {
       const channels = await Channel.find({ type: "private", participants: participantId });

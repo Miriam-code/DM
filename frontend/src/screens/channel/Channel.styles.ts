@@ -1,4 +1,4 @@
-import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import {StyleSheet, ViewStyle, TextStyle} from 'react-native';
 
 interface Styles {
   header: ViewStyle;
@@ -13,19 +13,26 @@ interface Styles {
   sendButtonText: TextStyle;
   textInputContainer: ViewStyle;
   textInputStyle: TextStyle;
-  mainContainer:ViewStyle;
-  button:ViewStyle;
+  mainContainer: ViewStyle;
+  Container: ViewStyle;
+  button: ViewStyle;
+  ownMessage: ViewStyle;
+  otherMessage: ViewStyle;
+  otherUserName: TextStyle;
 }
 
 const styles: Styles = StyleSheet.create<Styles>({
-
- button: {
-    marginBottom:30,
+  button: {
+    marginBottom: 30,
   },
   mainContainer: {
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
+  },
+  Container: {
+    display: 'flex',
+    flexDirection: 'column',
   },
   header: {
     flexDirection: 'row',
@@ -36,7 +43,7 @@ const styles: Styles = StyleSheet.create<Styles>({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333', // Couleur du titre du chat
+    color: '#333',
   },
   messageContainer: {
     flexDirection: 'row',
@@ -46,15 +53,15 @@ const styles: Styles = StyleSheet.create<Styles>({
     fontSize: 17,
     fontWeight: 'bold',
     marginRight: 10,
-    color: '#007bff', // Couleur du nom d'utilisateur du message
+    color: '#007bff',
   },
   messageText: {
     fontSize: 16,
-    color: '#333', // Couleur du texte du message
+    color: '#333',
   },
   noMessagesText: {
     fontSize: 16,
-    color: '#555', // Couleur du texte "Aucun message"
+    color: '#555',
     textAlign: 'center',
     marginTop: 20,
   },
@@ -67,11 +74,11 @@ const styles: Styles = StyleSheet.create<Styles>({
     flex: 1,
     height: 40,
     borderWidth: 1,
-    borderColor: '#ddd', // Couleur de la bordure de l'entrée
+    borderColor: '#ddd',
     borderRadius: 20,
     paddingHorizontal: 15,
     marginRight: 10,
-    marginBottom:30,
+    marginBottom: 30,
   },
   textInputContainer: {
     marginTop: '5%',
@@ -89,15 +96,31 @@ const styles: Styles = StyleSheet.create<Styles>({
     borderRadius: 20,
   },
   sendButton: {
-   backgroundColor: '#4c5dec', // Couleur du bouton d'envoi
+    backgroundColor: '#4c5dec',
     padding: 10,
     borderRadius: 20,
   },
   sendButtonText: {
-    color: 'white', // Couleur du texte du bouton d'envoi
+    color: 'white',
     fontSize: 16,
-    margin:10,
-    marginBottom:0,
+    margin: 10,
+    marginBottom: 0,
+  },
+  ownMessage: {
+    flexDirection: 'row',
+  },
+  otherMessage: {
+    flexDirection: 'row',
+
+    alignSelf: 'flex-end',
+  },
+  otherUserName: {
+    ali: 'flex-end',
+    fontSize: 17,
+    fontWeight: 'bold',
+    marginRight: 10,
+    color: '#27ae60',
+    alignItems: 'flex-end',
   },
 });
 

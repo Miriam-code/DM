@@ -54,17 +54,22 @@ const Home: React.FC = () => {
           <Text style={styles.titleTextStyle}>ALL CHANNELS</Text>
         </View>
         <FlatList
+        style={styles.flatListContainer}
+        contentContainerStyle={{ alignItems: 'center' }}
           data={channelsList}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <View style={styles.textInputContainer}>
-              <Text>{item.channelName}</Text>
-              <Button
-                title="JOIN ➔"
-                onPress={() =>
+              <Text style={styles.textStyleChannelName}>{item.channelName}</Text>
+              <Pressable style={[styles.button]} onPress={() =>
                   navigation.navigate("Channel", { id: item._id })
-                }
-              />
+                }>
+                <Text>JOIN ➔</Text>
+              </Pressable>
+              
+         
+               
+              
             </View>
           )}
         />

@@ -22,7 +22,9 @@ interface Styles {
   buttonText: TextStyle;
   buttonTextPressed: TextStyle;
   modalOverlay: ViewStyle;
-
+  flatListContainer: ViewStyle;
+  textStyleChannelName: TextStyle;
+  joinButtonStyle: ViewStyle;
 }
 
 const styles: Styles = StyleSheet.create<Styles>({
@@ -50,6 +52,7 @@ const styles: Styles = StyleSheet.create<Styles>({
     alignItems: 'center',
     flex: 3,
     marginTop: '15%',
+    justifyContent: 'center',
   },
   headerContainer: {
     alignItems: 'center',
@@ -62,10 +65,13 @@ const styles: Styles = StyleSheet.create<Styles>({
     fontFamily: 'Noto Sans',
   },
   textInputContainer: {
+    flexDirection: 'row',
     marginTop: '5%',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     width: '80%',
     marginBottom: 10,
+    alignItems: 'center',
+    
   },
   textInputStyle: {
     height: 60,
@@ -145,7 +151,7 @@ const styles: Styles = StyleSheet.create<Styles>({
     transition: 'background-color .3s',
   },
   buttonPressed: {
-    backgroundColor: '#3b82f6', // Couleur lorsque pressé
+    backgroundColor: '#3b82f6', 
     shadowColor: '#3b82f65f',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
@@ -157,12 +163,28 @@ const styles: Styles = StyleSheet.create<Styles>({
     fontWeight: 'bold',
   },
   buttonTextPressed: {
-    color: '#fff', // Couleur du texte lorsque pressé
+    color: '#fff', 
   },
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0,0, 0.80)', // Couleur semi-transparente
+    backgroundColor: 'rgba(0, 0,0, 0.80)',
   },
+  flatListContainer: {
+    width: '90%',
+    height: '50%',
+    alignSelf: 'center',
+  },
+  textStyleChannelName: {
+    color: '#fff',
+    padding:2,
+    marginHorizontal: 5,
+    fontSize: 16,
+  },
+  joinButtonStyle: {
+    backgroundColor: '#4c5dec',
+    padding:10,
+    width:80
+  }
 
 });
 
