@@ -14,7 +14,6 @@ const Messages: React.FC = () => {
   const [channels , setChannels] = useState([]);
   const { user } = useContext(AuthContext);
   const [friend, setFriend] = useState({});
-  const userId = user._id;
   const [friendId , setFriendId] = useState('');
 
   const toggleListVisibility = () => {
@@ -29,9 +28,12 @@ const Messages: React.FC = () => {
 
   useEffect(() => {
     const fetchPrivateChannel = async () => {
+
+      const userId = user._id;
+      
       try {
         const { data } = await getPrivateChannels(userId);
-        console.log('front channels',data)
+      
         setChannels(data);
 
       } catch (error) {
@@ -40,7 +42,7 @@ const Messages: React.FC = () => {
       }
     };
     fetchPrivateChannel()
-  },[])
+  },[channels]);
 
   return (
     <SafeAreaView style={styles.screenContainer}>

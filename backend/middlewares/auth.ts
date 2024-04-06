@@ -118,14 +118,12 @@ const verifyToken = async (
             reject(new Error("Non autorisé"));
             return;
           }
-          // Ajoutez l'ID de l'utilisateur à la demande (req)
           (req as any).user = { _id: decoded.sub };
           resolve();
         }
       });
     });
 
-    // Si l'autorisation est accordée, retournez l'ID de l'utilisateur
     const userId = (req as any).user._id;
     next();
   } catch (err) {
