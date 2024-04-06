@@ -72,6 +72,21 @@ export const getOneChannel = async (id) => {
     });
 };
 
+export const getPrivateChannels = async (id) => {
+  return await axios({
+    method: 'get',
+    url: `${hostname}/channel/private/${id}`,
+  })
+    .then(res => {
+      console.log('api res private ', res.data);
+    
+      return res;
+    })
+    .catch(e => {
+      console.log(e);
+    });
+};
+
 export const deleteChannel = async id => {
   return await axios({
     method: 'delete',

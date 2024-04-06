@@ -1,10 +1,12 @@
-import {StyleSheet, ViewStyle, TextStyle} from 'react-native';
+import {StyleSheet, ViewStyle, TextStyle, ImageStyle} from 'react-native';
 
 interface Styles {
   screenContainer: ViewStyle;
   mainContainer: ViewStyle;
-  flatListContainer: ViewStyle;
-  textStyleChannelName: TextStyle;
+  viewImage: ViewStyle;
+  textName: TextStyle;
+  viewName : ViewStyle;
+
 }
 
 const styles: Styles = StyleSheet.create<Styles>({
@@ -19,16 +21,21 @@ const styles: Styles = StyleSheet.create<Styles>({
     alignItems: 'center',
     flex: 1,
   },
-  flatListContainer: {
-    width: '90%',
-    height: '50%',
-    alignSelf: 'center',
+  viewImage: {
+    width:'100%',
+    height: '30%'
   },
-  textStyleChannelName: {
+  textName: {
     color: '#fff',
-    padding:2,
-    marginHorizontal: 5,
-    fontSize: 16,
+    fontSize: 24,
+    fontWeight: 'bold',
   },
+  viewName : {
+    width:'100%',
+    height: '20%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+
 });
 export default styles;

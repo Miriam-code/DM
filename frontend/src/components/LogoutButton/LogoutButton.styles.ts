@@ -12,7 +12,6 @@ interface Styles {
 const styles: Styles = StyleSheet.create({
   menuItem: {
     padding: 15,
-    marginLeft: 20,
     fontWeight: 'bold',
     fontSize: 16,
     color: '#2196F3',

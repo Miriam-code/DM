@@ -75,8 +75,8 @@ const CreateProfileSetp2: React.FC = () => {
 
       // Ajoutez les autres champs du formulaire
       profileData.append('sexe', sexe);
-      profileData.append('firstname', firstName);
-      profileData.append('lastname', lastName);
+      profileData.append('firstName', firstName);
+      profileData.append('lastName', lastName);
       profileData.append('email', email);
       profileData.append('password', password);
       profileData.append('pseudo', pseudo);

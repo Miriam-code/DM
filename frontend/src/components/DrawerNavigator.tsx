@@ -41,7 +41,7 @@ const DrawerNavigator: React.FC = () => {
               {user  && (
                 <>
                   <Image source={{ uri:`${hostname}/upload/${user.profileImage}`}} style={{width: 100, height: 100, borderRadius: 50}} />
-                  <Text>{user.pseudo}</Text>
+                  <Text style={styles.headerText}>{user.pseudo}</Text>
                 </>
               )}
             </View>
@@ -62,10 +62,14 @@ const styles = StyleSheet.create({
   drawerHeader: {
     padding: 20,
     backgroundColor: '#262A34',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerText: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#fff',
+    marginVertical: 10,
   },
   profileImage: {
     width: 100,

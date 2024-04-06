@@ -16,11 +16,11 @@ interface SearchBarProps {
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({ showList, toggleListVisibility }) => {
+  const { user } = useContext(AuthContext);
   const [users, setUsers] = useState<any[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const navigation = useNavigation();
-  const { user } = useContext(AuthContext);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
@@ -30,7 +30,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({ showList, toggleListVisibi
         if (userToken) {
           const fetchedUsers = await getAllUsers(userToken);
           setUsers(fetchedUsers);
-          setFilteredUsers(fetchedUsers);
+          // Exclure l'utilisateur connecté de la liste des utilisateurs
+          const filtered = fetchedUsers.filter(u => u._id !== user._id);
+          setFilteredUsers(filtered);
         } else {
           console.error('Pas de token utilisateur trouvé.');
         }
@@ -44,7 +46,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ showList, toggleListVisibi
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    const filtered = users.filter(user => user.pseudo.toLowerCase().includes(query.toLowerCase()));
+    const filtered = users.filter(u => u._id !== user._id && u.pseudo.toLowerCase().includes(query.toLowerCase()));
     setFilteredUsers(filtered);
   };
 
@@ -74,8 +76,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({ showList, toggleListVisibi
     }
   }
   
-  
-
   return (
     <View style={styles.textInputContainer}>
       <TextInput
