@@ -10,14 +10,12 @@ import Messages from '../screens/messages/Messages';
 
 
 
+
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigator: React.FC = () => {
   const {user} = useContext(AuthContext);
  
-  
-  
-
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -25,9 +23,16 @@ const DrawerNavigator: React.FC = () => {
         headerStyle: { backgroundColor: '#262A34' },
         headerTintColor: 'white',
         headerTitleStyle: { fontWeight: 'bold', fontSize: 18 },
+        drawerStyle: {
+          backgroundColor: '#262A34',
+        },
+        drawerLabelStyle: {
+          color: '#fff',
+          fontSize: 16,
+        }
       }}
 
-  
+ 
 
       drawerContent={props => {
         return (
@@ -35,7 +40,7 @@ const DrawerNavigator: React.FC = () => {
             <View style={styles.drawerHeader}>
               {user  && (
                 <>
-                  <Image source={{ uri:`${hostname}/upload/${user.profileImage}`}} style={{width: 100, height: 100, borderRadius: 50, backgroundColor: '#eee'}} />
+                  <Image source={{ uri:`${hostname}/upload/${user.profileImage}`}} style={{width: 100, height: 100, borderRadius: 50}} />
                   <Text>{user.pseudo}</Text>
                 </>
               )}
@@ -56,9 +61,7 @@ const DrawerNavigator: React.FC = () => {
 const styles = StyleSheet.create({
   drawerHeader: {
     padding: 20,
-    backgroundColor: '#eee',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    backgroundColor: '#262A34',
   },
   headerText: {
     fontSize: 18,

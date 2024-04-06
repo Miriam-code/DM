@@ -5,28 +5,28 @@ const router: Router = express.Router();
 
 // CREATE PUBLIC CHANNEL
 
-router.post("channel/",ChannelController.createPublic);
+router.post("/channel",ChannelController.createPublic);
 
 // CREATE PRIVATE CHANNEL 
-router.post("channel/private",ChannelController.createPrivateChannel);
+router.post("/channel/private",ChannelController.createPrivateChannel);
 
 // GET ALL channels PUBLIC
 
-router.get("channel/", ChannelController.getAllPublic);
+router.get("/channel", ChannelController.getAllPublic);
 
 // GET ONE une channel avec ses messages
 
-router.get("channel/:id",ChannelController.getOne);
+router.get("/channel/:id",ChannelController.getOne);
 
-// GET ALL channel private 
+// GET ALL channel private d'un user 
 router.get("/channel/private/:id", ChannelController.getPrivateChannels);
 
 // DELETE
 
-router.delete("channel/:id",ChannelController.delete);
+router.delete("/channel/:id",ChannelController.delete);
 
 // UPDATE NAME 
-router.put("channel/:id", ChannelController.updateName)
+router.put("/channel/:id", ChannelController.updateName)
 
 
 export default router;

@@ -1,26 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, TextInput, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from "@react-navigation/native";
 import styles from './SearchBar.styles';
 import { getAllUsers } from '../../api/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { hostname } from '../../hostname/hostname';
 import send from '../../assets/icons/send.png';
+import { AuthContext } from "../../context/AuthContext";
+import { ToastAndroid } from "react-native";
+import { createPrivate } from '../../api/channel';
 
 interface SearchBarProps {
   showList: boolean;
   toggleListVisibility: () => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ showList, toggleListVisibility }) => {
+export const SearchBar: React.FC<SearchBarProps> = ({ showList, toggleListVisibility }) => {
   const [users, setUsers] = useState<any[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const navigation = useNavigation();
+  const { user } = useContext(AuthContext);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const userToken = await AsyncStorage.getItem('userToken');
-
         if (userToken) {
           const fetchedUsers = await getAllUsers(userToken);
           setUsers(fetchedUsers);
@@ -42,6 +48,34 @@ const SearchBar: React.FC<SearchBarProps> = ({ showList, toggleListVisibility })
     setFilteredUsers(filtered);
   };
 
+  const createPrivateChannel = async (friendId: string) => {
+    const user1Id = user._id;
+    const user2Id = friendId;
+  
+    try {
+      const newChannel = await createPrivate(user1Id, user2Id);
+  
+      if (newChannel.ok === true) {
+        ToastAndroid.show(`${newChannel.message}`, ToastAndroid.SHORT);
+        console.log('Création réussie ! ', newChannel.channel._id);
+        navigation.navigate('Channel', { id: newChannel.channel._id });
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        const errorMessage = "Un canal privé existe déjà entre ces utilisateurs";
+        setError(errorMessage);
+        ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
+      } else {
+        const errorMessage = "Erreur lors de la création du canal privé";
+        setError(errorMessage);
+        ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
+        console.error("Erreur lors de la création du canal privé:", error);
+      }
+    }
+  }
+  
+  
+
   return (
     <View style={styles.textInputContainer}>
       <TextInput
@@ -59,8 +93,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ showList, toggleListVisibility })
               <View style={styles.flatListItemContainer}>
                 <Image style={styles.flatListImageStyle} source={{ uri: `${hostname}/upload/${item.profileImage}` }} />
                 <Text style={styles.flatListTextStyle}>{item.pseudo}</Text>
-                <TouchableOpacity>
-                  <Image source={send} style={{width: 25, height: 25}}/>
+                <TouchableOpacity onPress={() => createPrivateChannel(item._id)}>
+                  <Image source={send} style={{ width: 25, height: 25 }} />
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>

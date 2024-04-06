@@ -4,6 +4,7 @@ import SearchBar from '../../components/SearchBar/SearchBar';
 import styles from './Messages.styles';
 
 const Messages: React.FC = () => {
+  
   const [isListVisible, setListVisible] = useState<boolean>(false);
 
   const toggleListVisibility = () => {

@@ -3,20 +3,44 @@ import { Text, View, TextInput, ScrollView, TouchableOpacity , Image , Button, P
 import { useRoute } from "@react-navigation/native";
 import io from "socket.io-client";
 import styles from "./Channel.styles";
-const fleche = require('../../assets/images/fleche.png');
-const camera = require('../../assets/images/camera.png');
+import fleche from '../../assets/icons/sendFleche.png';
+import camera from '../../assets/icons/camera.png';
+import { getAllMessages } from "../../api/message";
+import { getOneChannel } from "../../api/channel";
 import ImagePicker, { MediaType , CameraOptions, launchCamera} from 'react-native-image-picker';
 import { AuthContext } from "../../context/AuthContext";
+import { ToastAndroid } from "react-native";
+import { hostname } from "../../hostname/hostname";
 
 function Channel () { 
+  //id chatroom
+  const route = useRoute()
+  const { id }  = route.params;
 
+  const {user} = useContext(AuthContext);
+  const userId = user._id;
+
+  const fetchMessages = async () => {
+
+    try {
+      const { msg } = await getAllMessages(id);
+      setMessages(msg);
+
+    } catch (error) {
+      console.error(error);
+      ToastAndroid.show("Error fetching messages db ", ToastAndroid.SHORT)
+    }
+  };
+  
   const [messages, setMessages] = useState([]);
-  const user = useContext(AuthContext);
+  const [chatroom , setChatroom] = useState([])
+  const [chatroomName , setChatroomName] = useState("")
+
+  const [socket, setSocket] = useState("");
+  const [messageInput, setMessageInput] = useState("");
 
   const [cameraPhoto, setCameraPhoto] = useState();
-
-
-  /*const openCamera = async () => {
+  const openCamera = async () => {
 
     let options:CameraOptions = {
       saveToPhotos:true,
@@ -43,137 +67,144 @@ function Channel () {
     } catch (error) {
       console.error('Error requesting camera permission:', error);
     }
-
   
   };
-
-  /*const { user } = useContext(UserContext);
-  const userId = user._id;
-
-  const route = useRoute();
-  const { id } = route.params; 
-
-  const [channel, setChannel] = useState("");
-  const [messages, setMessages] = useState([]);*/
-  const [socket, setSocket] = useState(null);
-  const messageRef = useRef("");
-
   const sendMessage = () => {
-
     if (socket) {
-
-      socket.emit("channelMessage", {
+      socket.emit("chatroomMessage", {
         channelId: id,
-        user: userId,
-        message: messageRef.current,
+        userId: userId,
+        message: messageInput,
       });
-      messageRef.current = ""; // Effacer le message après l'envoi
+      fetchMessages()  
+    }
+    setMessageInput("");
+  };
+
+useEffect(() => {
+ const fetchMessages = async () => {
+    try {
+      const { msg } = await getAllMessages(id);
+      setMessages(msg);
+
+    } catch (error) {
+      console.error(error);
+      ToastAndroid.show("Error fetching messages db ", ToastAndroid.SHORT)
     }
   };
-  /*
-
-  useEffect(() => {
-
-    const setupSocket = () => {
-
-      if (user) {
-        const newSocket = io.connect("http://localhost:8080", {
-          query: {
-            userId: user._id,
-          },
-        });
-
-        newSocket.on("disconnect", () => {
-          setSocket(null);
-          setTimeout(setupSocket, 3000);
-        });
-
-        newSocket.on("connect", () => {
-          console.log("Socket Connected!");
-        });
-
-        setSocket(newSocket);
+  const fectChannel = async () => {
+    try {
+      const { data } = await getOneChannel(id);
+      setChatroom(data);
+      setChatroomName(data.channelName)
+      if (chatroomName.startsWith("Private")) {
+        setChatroomName("Private Channel");
       }
-    };
-    setupSocket();
-  }, []);
+    } catch (error) {
+      console.error(error);
+      ToastAndroid.show("Error fetching channel info", ToastAndroid.SHORT);
+    }
+  };
 
-  useEffect(() => {
-    // Fetch channel details
-    // (Utilisez votre méthode de récupération des données)
-    setChannel({ name: "Channel Name" });
+  fetchMessages();
+  fectChannel();
 
-    // Fetch messages
-    // (Utilisez votre méthode de récupération des données)
-    setMessages([
-      { userId: "1", name: "User1", message: "Hello" },
-      { userId: "2", name: "User2", message: "Hi" },
-    ]);
-  }, []);
+  console.log('msg api',messages)
 
-  useEffect(() => {
-    if (socket) {
-      socket.on("newMessage", (message) => {
-        setMessages([...messages, message]);
+}, []);
+
+useEffect(() => {
+  const setupSocket = () => {
+    if (user) {
+      const newSocket = io.connect(`${hostname}`, {
+        query: {
+          userId: userId,
+        },
       });
 
-      socket.emit("joinRoom", {
-        channelId: id,
+      newSocket.on("disconnect", () => {
+        setSocket(null);
+        setTimeout(setupSocket, 3000);
+        ToastAndroid.show("Error,Socket Disconnected!", ToastAndroid.SHORT)
+        console.log("decooooo");
       });
 
-      return () => {
+      newSocket.on("connect", () => {
+        ToastAndroid.show("Socket Connected!", ToastAndroid.SHORT)
+      });
+
+      setSocket(newSocket);    
+    
+    }
+  };
+  setupSocket();
+
+}, []);
+
+useEffect(() => { 
+
+  if (socket) {
+
+    socket.on("newMessage", (message) => {
+      const newMessages = [...messages, message];
+      setMessages(newMessages);
+    });
+
+    socket.emit("joinRoom", {
+      channelId: id,
+    });
+    console.log("join room");
+
+    return () => {
+      if (socket) {
         socket.emit("leaveRoom", {
           channelId: id,
         });
-      };
-    }
-  }, [socket]);*/
+        console.log("leave room");
+      }
+    };
+  }
 
+}, [socket,id,messages]);
 
-
-  return (
-    <View style={styles.mainContainer}>
-  <View style={styles.header}>
-    <Text style={styles.title}>Channel</Text>
-  </View>
-  <ScrollView>
-  {messages.length > 0 ? (
-    messages.map((message, i) => (
-      <View key={i} style={styles.messageContainer}>
-        <Text style={styles.messageUserName}>{message.name}:</Text>
-        <Text style={styles.messageText}>{message.message}</Text>
+return (
+  <View style={styles.mainContainer}>
+    <View style={styles.header}>
+      <Text style={styles.title}>{chatroomName}</Text>
+    </View>
+    <ScrollView>
+    {messages.length > 0 ? (
+        messages.map((message, i) => (
+          <View key={i} style={userId === message.userId ? styles.ownMessage : styles.otherMessage }>
+            <Text style={styles.messageUserName}>{message.userName}:</Text>
+            <Text style={styles.messageText}>{message.content}</Text>
+          </View>
+        ))
+      ) : (
+        <View style={styles.messageContainer}>
+          <Text style={styles.noMessagesText}>No messages</Text>
+        </View>    
+      )}
+      <View>
+        {cameraPhoto && <Image source={{uri: cameraPhoto}} />}
       </View>
-    ))
-  ) : (
-
-    <View style={styles.messageContainer}>
-      <Text style={styles.noMessagesText}>No messages</Text>
-      </View>    
-  )}
-  <View>
-  {cameraPhoto && <Image source={{uri: cameraPhoto}} />}
-  </View>
-
-</ScrollView>
-  <View style={styles.inputContainer}>
+    </ScrollView>
+    <View style={styles.inputContainer}>
     <TextInput
-      style={styles.input}
-      placeholder={`Say something ${user.name}!`}
-      onChangeText={(text) => (messageRef.current = text)}
-    />
-
-    <TouchableOpacity onPress={sendMessage} style={styles.button}>
-    <Image source={fleche} alt="fleche" style={{ width: 40, height: 40 }}  />
-    </TouchableOpacity>
-
-    <TouchableOpacity onPress={openCamera} style={styles.button}>
-    <Image source={camera} alt="fleche" style={{ width: 40, height: 40 }}  />
-    </TouchableOpacity>
-
+          style={styles.input}
+          placeholder={`Say something ${user.pseudo}!`}
+          onChangeText={(text) => setMessageInput(text)} 
+          value={messageInput}
+        />
+      <TouchableOpacity onPress={sendMessage} style={styles.button}>
+        <Image source={fleche} alt="fleche" style={{ width: 25, height: 25, marginRight: 10 }}  />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={openCamera} style={styles.button}>
+        <Image source={camera} alt="fleche" style={{ width: 30, height: 30 }}  />
+      </TouchableOpacity>
+    </View>
   </View>
-</View>
-  );
+);
 }
 
-
-export default Channel
+export default Channel;

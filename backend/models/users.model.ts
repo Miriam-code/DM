@@ -11,8 +11,8 @@ interface User extends Document {
   role: 'user' | 'admin';
   createdAt: Date;
   updatedAt: Date;
-  messages: Schema.Types.ObjectId[];
-  channels: Schema.Types.ObjectId[];
+ messages: Schema.Types.ObjectId[];
+channels: Schema.Types.ObjectId[];
 }
 
 

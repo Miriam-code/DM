@@ -1,36 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { View, Text, TextInput, Button, FlatList,SafeAreaView, Pressable, Alert, Modal } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 import styles from './Home.styles';
-//import toast from "react-hot-toast";
-import { createChannelAPI } from '../../api/channel.ts'
+import { ToastAndroid } from "react-native";
+import { createChannelAPI , getAll} from '../../api/channel.ts'
 
 
 const Home: React.FC = () => {
 
   const [channelsList, setChannelsList] = useState(null);
-  const [name, setName] = useState("");
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
  
-
   const createChannel = async (values) => {
-    try {
-      
-      const res = await createChannelAPI(values.name);
 
-      if (!res.ok){
-      //toast.success(res.message);
-      navigation.navigate('Channel'); 
+    try {
+
+      const channelName = values.name
+      const res = await createChannelAPI(channelName)
+      if (res.ok){
+      ToastAndroid.show(`${res.message}`, ToastAndroid.SHORT)
+      navigation.navigate('Channel',{id: res.newChannel._id}); 
       throw res;  
       } 
 
     } catch (e) {
       console.error(e);
-      //toast.error("Error creating Channel");
+      ToastAndroid.show("Error creating Channel", ToastAndroid.SHORT)
     }
   };
+
+  useEffect(() => {
+    const fetchChatrooms = async () => {
+
+      try {
+        const {data } = await getAll()
+        setChannelsList(data);
+
+      } catch (error) {
+        console.error(error);
+        ToastAndroid.show("Error fetching channel", ToastAndroid.SHORT)
+      }
+    };
+    fetchChatrooms();
+  }, []);
 
   return (
 
@@ -44,11 +58,11 @@ const Home: React.FC = () => {
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <View style={styles.textInputContainer}>
-              <Text>{item.name}</Text>
+              <Text>{item.channelName}</Text>
               <Button
                 title="JOIN ➔"
                 onPress={() =>
-                  navigation.navigate("channel", { channelId: item._id })
+                  navigation.navigate("Channel", { id: item._id })
                 }
               />
             </View>
